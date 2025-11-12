@@ -1,6 +1,7 @@
 import React from "react";
 
 import Modal from "./Modal";
+import { signIn } from "../api/auth";
 
 interface ModalSignInProps {
   setPageHome: () => void;
@@ -41,11 +42,17 @@ const ModalSignIn: React.FC<ModalSignInProps> = ({
     setViewNone();
   };
 
-  const handleSubmitForm = (event: React.FormEvent<HTMLFormElement>) => {
+// Adds asynch version to handleSumbitForm 
+  const handleSubmitForm = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (form.email && form.password) {
-      setPageHome();
+      const { error } = await signIn(form.email, form.password);
+      if (!error) {
+        setPageHome();
+      } else {
+        alert(error.message);
+      }
     }
   };
 

@@ -1,6 +1,7 @@
 import React from "react";
 
 import Modal from "./Modal";
+import { signUp } from "../api/auth";
 
 interface ModalRegisterProps {
   setPageHome: () => void;
@@ -37,7 +38,7 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({
     setViewNone();
   };
 
-  const handleSubmitForm = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmitForm = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (
@@ -47,9 +48,16 @@ const ModalRegister: React.FC<ModalRegisterProps> = ({
       form.confirmPassword
     ) {
       if (form.password === form.confirmPassword) {
-        setPageHome();
+      const { error } = await signUp(form.email, form.password);
+      if (!error) {
+        // moves to Home on success
+        setPageHome();              
       } else {
-        alert("Please re-enter your password");
+        // surfaces Supabase error
+        alert(error.message);       
+      }
+    } else {
+      alert("Passwords do not match");
       }
     }
   };
